@@ -27,4 +27,4 @@ With the API running, submit one sampled frame every second from a local video:
 python scripts/simulate_feed.py path\to\construction-video.mp4 --interval-ms 1000 --site-location "College Demo Site"
 ```
 
-The simulator JPEG-encodes each sampled frame, posts it to `/predict`, and prints each response. Inference is explicitly CPU-only and requests are serialized around the model to keep an i3-class laptop responsive. The response includes all detected classes and bounding boxes; only the six `NO-*`/fall classes create MongoDB violation records and WebSocket alerts.
+The simulator JPEG-encodes each sampled frame, posts it to `/predict`, and prints each response. Inference is explicitly CPU-only and requests are serialized around the model to keep an i3-class laptop responsive. The response includes all detected classes and bounding boxes; only the six `NO-*`/fall classes create MongoDB violation records and WebSocket alert.
