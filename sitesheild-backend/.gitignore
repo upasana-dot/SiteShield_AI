@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+mlruns/
+datasets/
+!datasets/.gitkeep
+app/ml/weights/*.pt
+!app/ml/weights/.gitkeep
+app/static/annotations/
+!app/static/annotations/.gitkeep
