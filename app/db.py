@@ -14,8 +14,20 @@ def connect_to_mongo() -> None:
     settings = get_settings()
     _client = MongoClient(settings.mongo_uri, serverSelectionTimeoutMS=4_000)
     _client.admin.command("ping")
-    get_violations_collection().create_index([("timestamp", -1)])
-    get_violations_collection().create_index([("status", 1), ("timestamp", -1)])
+    collection = get_violations_collection()
+    collection.create_index([("timestamp", -1)])
+    collection.create_index([("status", 1)])
+    collection.create_index([("violation_type", 1)])
+
+
+def is_mongo_connected() -> bool:
+    if _client is None:
+        return False
+    try:
+        _client.admin.command("ping")
+        return True
+    except PyMongoError:
+        return False
 
 
 def close_mongo_connection() -> None:
