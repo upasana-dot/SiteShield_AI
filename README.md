@@ -33,6 +33,6 @@ python scripts/simulate_feed.py --video path\to\construction-video.mp4 --every-m
 
 The simulator JPEG-encodes each sampled frame, posts it to `/predict`, and prints violation count, compliance score, and inference time. You can try the API in this order: start MongoDB, run Uvicorn, open `/docs`, upload an image to `POST /predict` with `camera_id` and `site_location`, then run the simulator on a video.
 
-## Known limitations
+##Known limitations
 
 Current test-set AP50 is weak for `NO-Safety Vest` (0.08), `NO-Mask` (0.01), `Fall-Detected`, `Gloves`, `Goggles`, `NO-Gloves`, and `NO-Goggles` (0.00). Those low-performing violation categories are disabled by default in `app/config.py`; `NO-Hardhat` and `NO-Safety Vest` have configurable confidence gates. Retrain and validate a v2 model, then replace `models/v1/best.pt` and its metadata together.
