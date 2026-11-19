@@ -1,6 +1,18 @@
 {
-  "mAP50": 0.23941535893740604,
-  "mAP50-95": 0.1219000878302187,
-  "precision": 0.33621915060325824,
-  "recall": 0.28055692339034916
+  "per_class_ap50": {
+    "Hardhat": 0.75,
+    "Person": 0.65,
+    "Ladder": 0.53,
+    "Mask": 0.41,
+    "NO-Hardhat": 0.37,
+    "Safety Cone": 0.3,
+    "Safety Vest": 0.25,
+    "NO-Safety Vest": 0.08,
+    "NO-Mask": 0.01,
+    "Fall-Detected": 0.0,
+    "Gloves": 0.0,
+    "Goggles": 0.0,
+    "NO-Gloves": 0.0,
+    "NO-Goggles": 0.0
+  }
 }
