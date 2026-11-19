@@ -1,0 +1,10 @@
+import {RefreshCw,ShieldAlert} from 'lucide-react';import type {ReactNode} from 'react';import {ago,dateTime,frameUrl,pct} from '../utils/format';import type {Violation} from '../api/types';
+export function Card({children,className=''}:{children:ReactNode;className?:string}){return <section className={`card ${className}`}>{children}</section>}
+export function Title({eyebrow,title,sub}:{eyebrow?:string;title:string;sub?:string}){return <div className="page-title">{eyebrow&&<div className="eyebrow">{eyebrow}</div>}<h1>{title}</h1>{sub&&<p>{sub}</p>}</div>}
+export function Loading({rows=3}:{rows?:number}){return <div className="skeletons">{Array.from({length:rows},(_,i)=><div className="skeleton" key={i}/>)}</div>}
+export function Failure({error,retry}:{error:string;retry:()=>void}){return <div className="failure"><ShieldAlert size={22}/><b>{error}</b><button className="btn" onClick={retry}><RefreshCw size={15}/>Retry</button></div>}
+export function Empty({children='Nothing to show yet.'}:{children?:ReactNode}){return <div className="empty"><div className="empty-icon"><ShieldAlert size={22}/></div><b>{children}</b><span>New records will appear here as the backend receives frames.</span></div>}
+export function Badge({children,tone='muted'}:{children:ReactNode;tone?:string}){return <span className={`badge ${tone}`}>{children}</span>}
+export function Severity({value}:{value:string}){return <Badge tone={value.toLowerCase()}>{value}</Badge>}
+export function Status({value}:{value:string}){return <Badge tone={value==='Resolved'?'green':'red'}>{value}</Badge>}
+export function ViolationRow({v,onClick}:{v:Violation;onClick?:()=>void}){return <div className={`alert-row ${onClick?'clickable':''}`} onClick={onClick}><img className="thumb" src={frameUrl(v.image_url)} alt="Annotated frame"/><div className="alert-main"><b>{v.violation_type}</b><span>{v.camera_id} · <time title={dateTime(v.timestamp)}>{ago(v.timestamp)}</time></span></div><Severity value={v.severity}/><Status value={v.status}/><span className="confidence">{pct(v.confidence_score)}</span></div>}
