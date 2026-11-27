@@ -11,34 +11,68 @@ from app.services.storage import save_frame
 from app.ws.manager import manager
 
 
-async def log_new_violations(detections: list[Detection], tracked: list[tuple[Detection, str]], camera_id: str, site_location: str, annotated, model_version: str) -> list[Violation]:
+async def log_new_violations(
+    detections: list[Detection],
+    tracked: list[tuple[Detection, str]],
+    camera_id: str,
+    site_location: str,
+    annotated,
+    model_version: str,
+) -> list[Violation]:
     settings = get_settings()
     pending = []
+
     for detection, track_id in tracked:
-        config = VIOLATION_CLASS_MAP[detection.class_name]
+        config = VIOLATION_CLASS_MAP.get(detection.class_name)
+        if not config or not config["enabled"]:
+            continue
+
         label = config["label"]
         if cooldown.allow(camera_id, track_id, label, settings.cooldown_seconds):
             pending.append((detection, track_id, config))
+
     if not pending:
         return []
-    image_url = save_frame(annotated, settings.frames_path)
-    collection = get_violations_collection()
-    output = []
+
     try:
+        image_url = save_frame(annotated, settings.frames_path)
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail=f"Could not save violation frame: {exc}") from exc
+
+    output = []
+
+    try:
+        collection = get_violations_collection()
+
         for detection, track_id, config in pending:
             document = {
-                "timestamp": datetime.now(timezone.utc), "camera_id": camera_id,
-                "site_location": site_location, "violation_type": config["label"],
-                "class_name": detection.class_name, "severity": config["severity"],
-                "confidence_score": detection.confidence_score, "bbox": detection.bbox,
-                "track_id": track_id, "image_url": image_url, "status": "Unresolved",
-                "resolved_at": None, "model_version": model_version,
+                "timestamp": datetime.now(timezone.utc),
+                "camera_id": camera_id,
+                "site_location": site_location,
+                "violation_type": config["label"],
+                "class_name": detection.class_name,
+                "severity": config["severity"],
+                "confidence_score": detection.confidence_score,
+                "bbox": detection.bbox,
+                "track_id": track_id,
+                "image_url": image_url,
+                "status": "Unresolved",
+                "resolved_at": None,
+                "model_version": model_version,
             }
-            inserted = collection.insert_one(document)
-            document["_id"] = str(inserted.inserted_id)
+
+            result = collection.insert_one(document)
+            document["_id"] = str(result.inserted_id)
+
             violation = Violation.model_validate(document)
             output.append(violation)
-            await manager.broadcast({"event": "new_violation", "violation": violation.model_dump(by_alias=True, mode="json")})
+
+            await manager.broadcast({
+                "event": "new_violation",
+                "violation": violation.model_dump(by_alias=True, mode="json"),
+            })
+
     except PyMongoError as exc:
         raise HTTPException(status_code=503, detail=f"MongoDB error: {exc}") from exc
+
     return output
