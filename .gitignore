@@ -13,3 +13,19 @@ storage/
 !storage/frames/
 storage/frames/*
 !storage/frames/.gitkeep
+
+
+# Python virtual environments
+.venv/
+.venv312/
+.venv_windows_backup/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model and training files
+*.pt
+*.pth
