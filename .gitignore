@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.tmp/
+mlruns/
+datasets/
+models/**/*.pt
+models/**/*.onnx
+storage/
+!storage/
+!storage/frames/
+storage/frames/*
+!storage/frames/.gitkeep
